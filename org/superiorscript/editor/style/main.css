@@ -1,0 +1,42 @@
+#Content {
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+}
+
+#BannerContainer {
+	position: relative;
+}
+
+#Page {}
+
+#EditorSpace {
+	border: 0;
+	padding: 0;
+	resize: none;
+}
+
+.FlexRow {
+	display: flex;
+	flex-direction: row;
+}
+
+.FlexColumn {
+	display: flex;
+	flex-direction: column;
+}
+
+.FlexDynamic {
+	flex-grow: 1;
+	height: 100%;
+	width: 100%;
+}
+
+.FlexStatic {
+	flex-shrink: 0;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+}
