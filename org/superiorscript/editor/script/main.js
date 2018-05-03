@@ -1,3 +1,7 @@
 import * as events from "./events.js"
 
-console.log(events.test());
+function init(){
+	events.init();
+}
+
+init();

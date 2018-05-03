@@ -4,16 +4,79 @@
 	overflow: hidden;
 }
 
-#BannerContainer {
-	position: relative;
+#BannerContainer {}
+
+#BannerMenu {
+	width: 2rem;
 }
 
+#BannerMenu.Active {}
+
+#BannerLogin {}
+
+#BannerLogin.Active {}
+
+#BannerRegister {}
+
+#BannerRegister.Active {}
+
 #Page {}
+
+#PageTools {}
 
 #EditorSpace {
 	border: 0;
 	padding: 0;
 	resize: none;
+}
+
+.MenuIconSpacer {
+	height: 5%;
+}
+
+.MenuIconBar {
+	height: 10%;
+	width: 50%;
+	margin: 15% 25%;
+	transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out, width 0.5s ease-in-out;
+	transform-origin: left;
+}
+
+.Active .MenuIconBar-Top {
+	transform: rotate(45deg);
+	width: 70%;
+}
+
+.Active .MenuIconBar-Mid {
+	opacity: 0;
+}
+
+.Active .MenuIconBar-Bot {
+	transform: rotate(-45deg);
+	width: 70%;
+}
+
+.Button {
+	user-select: none;
+	cursor: pointer;
+}
+
+.ButtonText {
+	vertical-align: middle;
+	text-align: center;
+	padding: 0 0.2rem;
+}
+
+.ButtonBanner {
+	height: 2rem;
+	line-height: 2rem;
+	font-size: 1rem;
+}
+
+.ButtonPageTool {
+	height: 1.5rem;
+	line-height: 1.5rem;
+	font-size: 0.75rem;
 }
 
 .FlexRow {

@@ -3,6 +3,7 @@
 <head>
 <title>Superior Script Editor</title>
 <link rel='stylesheet' type='text/css' href='editor/style/main.css'/>
+<link rel='stylesheet' type='text/css' href='editor/style/themes/dark.css'/>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="module" src="editor/script/main.js"></script>
@@ -10,17 +11,22 @@
 <body>
 	<div id="Content" class="FlexColumn">
 		<div id="BannerContainer" class="FlexStatic FlexRow">
+			<div id="BannerMenu" class="FlexStatic Button ButtonBanner">
+				<div class="MenuIconSpacer"></div>
+				<div class="MenuIconBar MenuIconBar-Top"></div>
+				<div class="MenuIconBar MenuIconBar-Mid"></div>
+				<div class="MenuIconBar MenuIconBar-Bot"></div>
+				<div class="MenuIconSpacer"></div>
+			</div>
 			<div class="FlexDynamic"></div>
-
+			<div id="BannerLogin" class="FlexStatic Button ButtonText ButtonBanner">Login</div>
+			<div id="BannerRegister" class="FlexStatic Button ButtonText ButtonBanner">Register</div>
 		</div>
 		<div id="Page" class="FlexDynamic FlexColumn">
-			<div id="PageTools" class="FlexRow">
-				<div id="PageTools-File">
-					File
-				</div>
-				<div id="PageTools-Edit">
-					Edit
-				</div>
+			<div id="PageTools" class="FlexStatic FlexRow">
+				<div id="PageTools-File" class="FlexStatic Button ButtonText ButtonPageTool">File</div>
+				<div id="PageTools-Edit" class="FlexStatic Button ButtonText ButtonPageTool">Edit</div>
+				<div class="FlexDynamic"></div>
 			</div>
 			<textarea id="EditorSpace" class="FlexDynamic"></textarea>
 		</div>

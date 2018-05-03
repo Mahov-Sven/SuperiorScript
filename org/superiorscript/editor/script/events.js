@@ -1,3 +1,39 @@
-export function test() {
-	return "Hello";
+
+let activeBannerButton = -1;
+function setActiveBannerButton(active){
+	$("#BannerMenu").removeClass("Active");
+	$("#BannerLogin").removeClass("Active");
+	$("#BannerRegister").removeClass("Active");
+
+	if(active === activeBannerButton){
+		activeBannerButton = -1;
+		return;
+	}
+
+	switch(active){
+		case 0:
+			$("#BannerMenu").addClass("Active");
+
+			break;
+		case 1:
+			$("#BannerLogin").addClass("Active");
+
+			break;
+		case 2:
+			$("#BannerRegister").addClass("Active");
+
+			break;
+	}
+
+	activeBannerButton = active;
+}
+
+export function init() {
+
+	// Banner Buttons
+	$("#BannerMenu").click(() => setActiveBannerButton(0));
+	$("#BannerLogin").click(() => setActiveBannerButton(1));
+	$("#BannerRegister").click(() => setActiveBannerButton(2));
+
+
 }

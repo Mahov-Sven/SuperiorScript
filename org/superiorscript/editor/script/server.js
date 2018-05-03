@@ -23,6 +23,8 @@ http.createServer((request, resource) => {
 	}
 }).listen(8080);
 
+console.log("Server Running...");
+
 function openPage_Editor(request, resource){
 	file.readFile(filePath("editor/html/index.html"), (error, data) => {
 		resource.writeHead(200, {'Content-Type': 'text/html'});
@@ -63,7 +65,7 @@ function openPage_Unknown(request, resource, path){
 		} else {
 			output += " Fail";
 		}
-		
+
 		resource.end();
 		console.log(output);
 	});

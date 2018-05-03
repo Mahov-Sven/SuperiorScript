@@ -1,0 +1,59 @@
+#Content {}
+
+#BannerContainer {
+	background-color: #666666;
+}
+
+#BannerMenu {}
+
+#BannerMenu.Active {
+	background-color: #444444;
+}
+
+#BannerLogin {}
+
+#BannerLogin.Active {
+	background-color: #444444;
+}
+
+#BannerRegister {}
+
+#BannerRegister.Active {
+	background-color: #444444;
+}
+
+#Page {}
+
+#PageTools {
+	background-color: #333333;
+}
+
+#EditorSpace {
+	background-color: #222222;
+}
+
+.MenuIconSpacer {}
+
+.MenuIconBar {
+	background-color: #000000;
+}
+
+.Active .MenuIconBar-Top {}
+
+.Active .MenuIconBar-Mid {}
+
+.Active .MenuIconBar-Bot {}
+
+.Button {}
+
+.FlexRow {}
+
+.FlexColumn {}
+
+.FlexDynamic {}
+
+.FlexStatic {}
+
+* {
+	font-family: Verdana;
+}
