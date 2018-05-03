@@ -1,0 +1,1 @@
+let fragmentInit = function(){}

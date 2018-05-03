@@ -1,3 +1,4 @@
+import * as loader from "./loader.js"
 
 let activeBannerButton = -1;
 function setActiveBannerButton(active){
@@ -17,7 +18,7 @@ function setActiveBannerButton(active){
 			break;
 		case 1:
 			$("#BannerLogin").addClass("Active");
-
+			loader.loadFragment("PageSpace", "login");
 			break;
 		case 2:
 			$("#BannerRegister").addClass("Active");

@@ -23,7 +23,7 @@ http.createServer((request, resource) => {
 	}
 }).listen(8080);
 
-console.log("Server Running...");
+console.log("Server Running on Port 8080...");
 
 function openPage_Editor(request, resource){
 	file.readFile(filePath("editor/html/index.html"), (error, data) => {

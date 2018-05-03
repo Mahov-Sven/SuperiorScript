@@ -1,0 +1,14 @@
+#Login-Page {
+	width: 100%;
+	height: 100%;
+}
+
+#Login-Container {
+	position: absolute;
+	/**
+	width: 25rem;
+	max-width: 80%;
+	/**/
+	text-align: center;
+	padding: 0.5rem;
+}
