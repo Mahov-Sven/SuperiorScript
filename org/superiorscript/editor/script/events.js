@@ -2,6 +2,9 @@ import * as loader from "./loader.js"
 
 let activeBannerButton = -1;
 function setActiveBannerButton(active){
+
+	loader.clearFragment("PageSpace");
+
 	$("#BannerMenu").removeClass("Active");
 	$("#BannerLogin").removeClass("Active");
 	$("#BannerRegister").removeClass("Active");
@@ -30,6 +33,8 @@ function setActiveBannerButton(active){
 }
 
 export function init() {
+
+	$(".Button").click(function(){$(this).toggleClass("Active")});
 
 	// Banner Buttons
 	$("#BannerMenu").click(() => setActiveBannerButton(0));

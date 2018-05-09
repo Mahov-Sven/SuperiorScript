@@ -1,1 +1,1 @@
-let fragmentInit = function(){}
+var fragmentInit = function(){}
