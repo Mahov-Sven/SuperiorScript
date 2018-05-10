@@ -34,7 +34,9 @@ function setActiveBannerButton(active){
 
 export function init() {
 
-	$(".Button").click(function(){$(this).toggleClass("Active")});
+	$("#PageTools").hide();
+
+	$(".Button").click(function(){console.log(this)});
 
 	// Banner Buttons
 	$("#BannerMenu").click(() => setActiveBannerButton(0));

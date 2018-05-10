@@ -58,8 +58,11 @@
 
 .FlexStatic {}
 
-.PageLine {
-	background-color: #111111;
+.Disabled {
+	opacity: 0.2;
+	user-select: none;
+	cursor: default;
+	pointer-events: none;
 }
 
 /*===== Main Page =====*/
@@ -107,7 +110,6 @@
 #Login-Page {}
 
 #Login-Container {
-	background-color: #333333;
-	border: 0.2rem solid #111111;
-	border-radius: 0.5rem;
+	background-color: #666666;
+	border: 0.2rem solid #333333;
 }

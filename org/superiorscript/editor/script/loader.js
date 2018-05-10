@@ -13,14 +13,6 @@ export function clearFragment(insertId){
 }
 
 export function loadFragment(insertId, fragmentName){
-	const script = document.createElement("script");
-	script.onload = () => {
-		if(typeof fragmentInit === "function")
-			fragmentInit();
-	}
-	script.src = `editor/fragments/${fragmentName}/${fragmentName}.js`;
-	script.id = `Fragment-JavaScript`
-	document.head.appendChild(script);
 
 	const style = document.createElement("link");
 	style.rel = "stylesheet";
@@ -32,5 +24,14 @@ export function loadFragment(insertId, fragmentName){
 	const htmlLocation = `editor/fragments/${fragmentName}/${fragmentName}.html`;
 	loadFile(htmlLocation).then((html) => {
 		$(`#${insertId}`).html(html);
+
+		const script = document.createElement("script");
+		script.onload = () => {
+			if(typeof fragmentInit === "function")
+				fragmentInit();
+		}
+		script.src = `editor/fragments/${fragmentName}/${fragmentName}.js`;
+		script.id = `Fragment-JavaScript`
+		document.head.appendChild(script);
 	});
 }
