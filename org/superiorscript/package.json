@@ -1,0 +1,30 @@
+{
+  "name": "superiorscript",
+  "version": "1.0.0",
+  "description": "A Superior Programming Language",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Test command working\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mahov-Sven/SuperiorScript.git"
+  },
+  "keywords": [
+    "Scripting",
+    "Programming",
+    "Language"
+  ],
+  "author": "Ethan Penn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mahov-Sven/SuperiorScript/issues"
+  },
+  "homepage": "https://github.com/Mahov-Sven/SuperiorScript#readme",
+  "dependencies": {
+    "mongodb": "^3.1.0-beta4"
+  }
+}
