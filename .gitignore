@@ -1,3 +1,6 @@
-# ignore database
-org/superiorscript/res/database/
-org/superiorscript/node_modules/
+# ignore these directories
+org/superiorscript/res/database/*
+org/superiorscript/node_modules/*
+
+# keep .placeholder files
+!.placeholder
