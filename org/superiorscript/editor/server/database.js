@@ -1,10 +1,13 @@
 var exports = module.exports = {};
 
 const MongoClient = require("mongodb").MongoClient;
+const Encryption = require("crypto");
 
 const filePath = (path) => "../../" + path;
 const Globals = require(filePath("editor/server/globals"));
 const Logger = require(filePath("editor/server/logger"));
+const Result = require(filePath("editor/server/result")).Result;
+const PromiseError = require(filePath("editor/server/promise_error")).PromiseError;
 
 class Database {
 
@@ -13,27 +16,34 @@ class Database {
 		this.databaseName = databaseName;
 		if(this.databaseName != undefined) Logger.log("Database", `Switched to database ${this.databaseName}`);
 		this.database = undefined;
-		this.collectionName = undefined;
+		this.collectionName = collectionName;
 		if(this.collectionName != undefined) Logger.log("Database", `Switched to collection ${this.collectionName}`);
+	}
+
+	async _open(){
+		return new Promise((resolve, reject) => {
+			MongoClient.connect(mongoUrl, { useNewUrlParser: true }, (error, client) => {
+				if (error){
+					reject(new PromiseError(error));
+				} else {
+					this.client = client;
+					if(this.databaseName) this.database = this.client.db(this.databaseName);
+					resolve(new Result(true));
+				}
+			});
+		}).catch((e) => {
+			if(e.isPromise){
+				Logger.err("Database", e.error);
+				return new Result(false);
+			}
+			else throw e;
+		});
 	}
 
 	async open(){
 		Logger.log("Database", "Trying to connected to client...");
-		return new Promise((resolve, reject) => {
-			MongoClient.connect(mongoUrl, { useNewUrlParser: true }, (err, client) => {
-				if (err){
-					reject(err);
-				} else {
-					Logger.log("Database", "Successfully connected to cleint");
-
-					this.client = client;
-					if(this.databaseName) this.database = this.client.db(this.databaseName);
-					resolve(this);
-				}
-			});
-		}).catch((e) => {
-			Logger.err("Database", e);
-		});
+		const result = await this._open();
+		if(result.success) Logger.log("Database", "Successfully connected to client");
 	}
 
 	async switchToDatabase(databaseName){
@@ -47,20 +57,69 @@ class Database {
 		Logger.log("Database", `Switched to collection ${this.collectionName}`);
 	}
 
+	async addToken(object){
+		const prevCollection = this.collectionName;
+		await this.switchToCollection(collections.tokens);
+
+		const tokenObj = {};
+		tokenObj.object = object;
+
+		const tokenResult = await this.find(object);
+		if(tokenResult.success) {
+			await this.switchToCollection(prevCollection);
+			return tokenResult;
+		}
+
+		tokenObj.token = Encryption
+			.createHash("sha1")
+			.update((new Date()).toString() + Math.random().toString())
+			.digest("hex");
+
+		tokenObj.date = new Date();
+
+		await this.add(tokenObj);
+		await this.switchToCollection(prevCollection);
+
+		return new Result(true, tokenObj);
+	}
+
+	async findToken(token){
+		const prevCollection = this.collectionName;
+		await this.switchToCollection(collections.tokens);
+
+		const tokenObj = {};
+		tokenObj.token = token;
+
+		const tokenResult = await this.find(tokenObj);
+		if(tokenResult.success){
+			const timeDiff = (new Date()).getTime() - tokenResult.data[0].date.getTime();
+
+			if(timeDiff >= tokenLifetime)
+				await this.remove(tokenObj);
+
+			await this.switchToCollection(prevCollection);
+			return new Result(timeDiff < tokenLifetime, tokenResult.data[0]);
+		}
+
+		await this.switchToCollection(prevCollection);
+
+		return new Result(false);
+	}
+
 	async _add(objArr){
 		if(this.collectionName === undefined) throw new Error("Invalid collection name undefined");
 		return new Promise((resolve, reject) => {
-			this.database.collection(this.collectionName).insertMany(objArr, function(err, res){
-				if (err){
-					reject({error: err, isLocal:true});
+			this.database.collection(this.collectionName).insertMany(objArr, (error, res) => {
+				if (error){
+					reject(new PromiseError(error));
 				} else {
-					resolve(true);
+					resolve(new Result(true));
 				}
 			});
 		}).catch((e) => {
-			if(e.isLocal){
+			if(e.isPromise){
 				Logger.warn("Database", e.error);
-				return false;
+				return new Result(false);
 			}
 			else throw e;
 		});
@@ -69,7 +128,9 @@ class Database {
 	async add(input){
 		const objArr = Array.isArray(input) ? input : [input];
 		Logger.log("Database", `Trying to add ${objArr.length} object(s) into collection ${this.collectionName}...`);
-		if(await this._add(objArr)) Logger.log("Database", `Successfully added ${objArr.length} object(s) into collection ${this.collectionName}`);
+		const result = await this._add(objArr);
+		if(result.success) Logger.log("Database", `Successfully added ${objArr.length} object(s) into collection ${this.collectionName}`);
+		return result;
 	}
 
 	async update(){
@@ -79,42 +140,44 @@ class Database {
 	async _remove(query){
 		if(this.collectionName === undefined) throw new Error("Invalid collection name undefined");
 		return new Promise((resolve, reject) => {
-			this.database.collection(this.collectionName).deleteMany(query, function(err, res){
-				if (err){
-					reject({error: err, isLocal:true});
+			this.database.collection(this.collectionName).deleteMany(query, (error, res) => {
+				if (error){
+					reject(new PromiseError(error));
 				} else {
-					resolve(true);
+					resolve(new Result(true));
 				}
 			});
 		}).catch((e) => {
-			if(e.isLocal){
+			if(e.isPromise){
 				Logger.warn("Database", e.error);
-				return false;
+				return new Result(false);
 			}
 			else throw e;
 		});
 	}
 
 	async remove(query){
-		if(query === undefined) query = {};
-		Logger.log("Database", `Trying to remove ${objArr.length} object(s) from collection ${this.collectionName}...`);
-		if(await this._remove(query)) Logger.log("Database", `Successfully removed ${objArr.length} object(s) from collection ${this.collectionName}`);
+		if(query === undefined) return new Result(false);
+		Logger.log("Database", `Trying to remove an object(s) from collection ${this.collectionName}...`);
+		const result = await this._remove(query);
+		if(result.success) Logger.log("Database", `Successfully removed an object(s) from collection ${this.collectionName}`);
+		return result;
 	}
 
 	async _find(query){
 		if(this.collectionName === undefined) throw new Error("Invalid collection name undefined");
 		return new Promise((resolve, reject) => {
-			this.database.collection(this.collectionName).find(query).toArray(function(err, res){
-				if (err){
-					reject({error: err, isLocal:true});
+			this.database.collection(this.collectionName).find(query).toArray((error, res) => {
+				if (error){
+					reject(new PromiseError(error));
 				} else {
-					resolve(res);
+					resolve(new Result(res.length > 0, res));
 				}
 			});
 		}).catch((e) => {
-			if(e.isLocal){
+			if(e.isPromise){
 				Logger.warn("Database", e.error);
-				return false;
+				return new Result(false);
 			}
 			else throw e;
 		});
@@ -124,24 +187,24 @@ class Database {
 		if(query === undefined) query = {};
 		Logger.log("Database", `Trying to find an object in collection ${this.collectionName}...`);
 		const result = await this._find(query);
-		if(result.length > 0) Logger.log("Database", `Successfully found the object in collection ${this.collectionName}`);
+		if(result.success) Logger.log("Database", `Successfully found the object in collection ${this.collectionName}`);
 		else Logger.log("Database", `Could not find the object in collection ${this.collectionName}`);
 		return result;
 	}
 
 	async _clear(){
 		return new Promise((resolve, reject) => {
-			this.database.collection(this.collectionName).drop(function(err, res){
-				if (err){
-					reject({error: err, isLocal:true});
+			this.database.collection(this.collectionName).drop((error, res) => {
+				if (error){
+					reject(new PromiseError(error));
 				} else {
-					resolve(true);
+					resolve(new Result(true));
 				}
 			});
 		}).catch((e) => {
-			if(e.isLocal){
+			if(e.isPromise){
 				Logger.warn("Database", e.error);
-				return false;
+				return new Result(false);
 			}
 			else throw e;
 		});
@@ -149,7 +212,8 @@ class Database {
 
 	async clear(){
 		Logger.warn("Database", `Trying to clear collection ${this.collectionName} in database ${this.databaseName}...`);
-		if(this._clear()) Logger.warn("Database", `Successfully cleared collection ${this.collectionName} in database ${this.databaseName}`);
+		const result = await this._clear();
+		if(result.success) Logger.warn("Database", `Successfully cleared collection ${this.collectionName} in database ${this.databaseName}`);
 	}
 
 	async close(){
