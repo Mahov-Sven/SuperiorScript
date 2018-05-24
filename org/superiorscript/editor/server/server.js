@@ -25,6 +25,9 @@ async function handleRequest(request, resource){
 		case "/editor":
 			await Page.editor(request, resource, queue);
 			break;
+		case "/register":
+			await Page.register(request, resource, queue);
+			break;
 		case "/login":
 			await Page.login(request, resource, queue);
 			break;

@@ -36,19 +36,15 @@ class Database {
 		});
 	}
 
-	switchToDatabase(databaseName){
+	async switchToDatabase(databaseName){
 		this.databaseName = databaseName;
 		Logger.log("Database", `Switched to database ${this.databaseName}`);
 		this.database = this.client.db(this.databaseName);
 	}
 
-	switchToCollection(collectionName){
+	async switchToCollection(collectionName){
 		this.collectionName = collectionName;
 		Logger.log("Database", `Switched to collection ${this.collectionName}`);
-	}
-
-	async checkToken(request, resource, queue){
-
 	}
 
 	async _add(objArr){
@@ -127,8 +123,9 @@ class Database {
 	async find(query){
 		if(query === undefined) query = {};
 		Logger.log("Database", `Trying to find an object in collection ${this.collectionName}...`);
-		const result = this._find(query);
-		Logger.log("Database", `Successfully found the object in collection ${this.collectionName}`);
+		const result = await this._find(query);
+		if(result.length > 0) Logger.log("Database", `Successfully found the object in collection ${this.collectionName}`);
+		else Logger.log("Database", `Could not find the object in collection ${this.collectionName}`);
 		return result;
 	}
 
@@ -151,11 +148,11 @@ class Database {
 	}
 
 	async clear(){
-		Logger.log("Database", `Trying to clear collection ${this.collectionName} in database ${this.databaseName}...`);
-		if(this._clear()) Logger.log("Database", `Successfully cleared collection ${this.collectionName} in database ${this.databaseName}`);
+		Logger.warn("Database", `Trying to clear collection ${this.collectionName} in database ${this.databaseName}...`);
+		if(this._clear()) Logger.warn("Database", `Successfully cleared collection ${this.collectionName} in database ${this.databaseName}`);
 	}
 
-	close(){
+	async close(){
 		Logger.log("Database", `Trying to disconnect from client...`);
 		this.client.close();
 		Logger.log("Database", `Successfully disconnected from client`);
