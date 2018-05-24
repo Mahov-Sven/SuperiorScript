@@ -1,2 +1,3 @@
 # ignore database
 org/superiorscript/res/database/
+org/superiorscript/node_modules/
