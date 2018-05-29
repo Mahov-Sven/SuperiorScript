@@ -26,27 +26,16 @@ exports.clear = async function(request, resource, queue){
 	const database = new Database(databaseName, collectionName);
 	await database.open();
 
-	if(collectionName === undefined){
-		// TODO clear all collections if not specified
-		Logger.log("Page", "Collection not given");
+	let clearResult;
+	if(collectionName === undefined) clearResult = await database.clearAll();
+	else clearResult = await database.clear();
 
-		const response = new Response(
-			false,
-			`No collection name was given`,
-			`The given collection name was undefined`
-		);
-		resource.json(response);
-		return await database.close();
-	}
-
-	await database.clear();
-
-	Logger.log("Page", "Collection clear completed");
+	if(clearResult.success) Logger.log("Page", `Collections ${clearResult.data.join(", ")} have been cleared`);
 
 	const response = new Response(
 		true,
-		`Collection ${collectionName} in database ${databaseName} has been cleared`,
-		`All entries in database ${databaseName} collection ${collectionName} have been removed`
+		`Collections ${clearResult.data.join(", ")} in database ${databaseName} has been cleared`,
+		`All entries in database ${databaseName} collections ${clearResult.data.join(", ")} have been removed`
 	);
 	resource.json(response);
 	return await database.close();
@@ -227,7 +216,7 @@ exports.unknown = async function(request, resource, queue){
 
 	let output = `"${path}"`;
 
-	const data = await File.readFile(path);
+	const fileResult = await File.readFile(path);
 
 	switch (fileExtension) {
 		case "js":
@@ -244,8 +233,8 @@ exports.unknown = async function(request, resource, queue){
 			break;
 	}
 
-	if(data != undefined) {
-		resource.write(data);
+	if(fileResult.success) {
+		resource.write(fileResult.data);
 		Logger.log("Page", output);
 	}
 }

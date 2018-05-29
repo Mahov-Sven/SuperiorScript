@@ -57,6 +57,34 @@ class Database {
 		Logger.log("Database", `Switched to collection ${this.collectionName}`);
 	}
 
+	async _collections(){
+		return new Promise((resolve, reject) => {
+			this.database.listCollections().toArray((error, collectionInfos) => {
+				if (error){
+					reject(new PromiseError(error));
+				} else {
+					resolve(new Result(true, collectionInfos));
+				}
+			});
+		}).catch((e) => {
+			if(e.isPromise){
+				Logger.err("Database", e.error);
+				return new Result(false);
+			}
+			else throw e;
+		});
+	}
+
+	async collectionNames(){
+		const collectionResults = await this._collections();
+		if(!collectionResults.success) return new Result(false);
+		const collectionNames = [];
+		for(const collectionInfo of collectionResults.data){
+			collectionNames.push(collectionInfo.name);
+		}
+		return new Result(true, collectionNames);
+	}
+
 	async addToken(object){
 		const prevCollection = this.collectionName;
 		await this.switchToCollection(collections.tokens);
@@ -214,6 +242,29 @@ class Database {
 		Logger.warn("Database", `Trying to clear collection ${this.collectionName} in database ${this.databaseName}...`);
 		const result = await this._clear();
 		if(result.success) Logger.warn("Database", `Successfully cleared collection ${this.collectionName} in database ${this.databaseName}`);
+		return new Result(result.success, [this.collectionName]);
+	}
+
+	async clearAll(){
+		Logger.warn("Database", `Trying to clear database ${this.databaseName}...`);
+		const prevCollection = this.collectionName;
+		const collectionNameResults = await this.collectionNames();
+		let success = collectionNameResults.success;
+		const clearedCollections = [];
+		if(success){
+			for(const collection of collectionNameResults.data){
+				await this.switchToCollection(collection);
+				const result = await this._clear();
+				if(result.success){
+					clearedCollections.push(collection);
+					Logger.warn("Database", `Successfully cleared collection ${this.collectionName} in database ${this.databaseName}`);
+				}
+				else success = false;
+			}
+		}
+		await this.switchToCollection(prevCollection);
+		if(success) Logger.warn("Database", `Successfully cleared database ${this.databaseName}`);
+		return new Result(success, clearedCollections);
 	}
 
 	async close(){
