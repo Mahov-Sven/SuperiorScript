@@ -34,6 +34,9 @@ async function handleRequest(request, resource){
 		case "/login":
 			await Page.login(request, resource, queue);
 			break;
+		case "/file":
+			await Page.file(request, resource, queue);
+			break;
 		default:
 			await Page.unknown(request, resource, queue);
 			break;

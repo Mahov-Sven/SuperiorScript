@@ -8,39 +8,53 @@ const Logger = require(filePath("editor/server/logger"));
 const Result = require(filePath("editor/server/result")).Result;
 const PromiseError = require(filePath("editor/server/promise_error")).PromiseError;
 
+class File {
 
-exports.readFile = async function(fileName){
-	return new Promise(function(resolve, reject) {
-		fs.readFile(fileName, function(error, data){
-			if (err){
-				reject(new PromiseError(error));
-			} else {
-				resolve(data);
-			}
+	constructor(fileName, database){
+		this.database = database;
+		this.fd = undefined;
+		this.data = {}
+		this.fileName = fileName;
+		this._id = undefined;
+		this.isOpen = false;
+	}
+
+	open(){
+		let result = this.database.find({
+
 		});
-	}).catch((e) => {
-		if(e.isPromise){
-			Logger.err("File", e.error);
-			return new Result(false);
-		}
-		else throw e;
-	});
+
+		if(result.success) this.data = result.data;
+		else this.data = this.database.add({
+		}).data;
+
+		Logger.log("File", `Opening file ${fileName}`);
+		this.fd = fs.openSync(this.data.fileName, "a+");
+
+		this.data.isOpen = true;
+		this.database.update({
+			// find object
+		},{
+			// update information
+		});
+	}
+
+	truncate(length=0){
+		Logger.log("File", `Truncating file ${fileName}`);
+		fs.ftruncateSync(this.fd, length);
+	}
+
+	close(){
+		Logger.log("File", `Closing file ${fileName}`);
+		fs.closeSync(this.fd);
+		this.fd = undefined;
+	}
+
+	static async readFile(fileName) {
+		Logger.log("File", `Reading file ${fileName}`);
+		const data = fs.readFileSync(this.data.fileName);
+		return new Result(true, data);
+	}
 }
 
-exports.writeFile = async function(fileName, contents){
-	return new Promise(function(resolve, reject) {
-		fs.writeFile(fileName, contents, function(error){
-			if (err){
-				reject(new PromiseError(error));
-			} else {
-				resolve(true);
-			}
-		});
-	}).catch((e) => {
-		if(e.isPromise){
-			Logger.err("File", e.error);
-			return new Result(false);
-		}
-		else throw e;
-	});
-}
+exports.File = File;

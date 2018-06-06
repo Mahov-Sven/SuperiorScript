@@ -1,6 +1,7 @@
 var exports = module.exports = {};
 
 const MongoClient = require("mongodb").MongoClient;
+const MongoFileSystem = require("mongodb").GridStore;
 const Encryption = require("crypto");
 
 const filePath = (path) => "../../" + path;
@@ -8,6 +9,7 @@ const Globals = require(filePath("editor/server/globals"));
 const Logger = require(filePath("editor/server/logger"));
 const Result = require(filePath("editor/server/result")).Result;
 const PromiseError = require(filePath("editor/server/promise_error")).PromiseError;
+const File = require(filePath("editor/server/file")).File;
 
 class Database {
 
@@ -32,7 +34,7 @@ class Database {
 				}
 			});
 		}).catch((e) => {
-			if(e.isPromise){
+			if(e.fromPromise){
 				Logger.err("Database", e.error);
 				return new Result(false);
 			}
@@ -67,7 +69,7 @@ class Database {
 				}
 			});
 		}).catch((e) => {
-			if(e.isPromise){
+			if(e.fromPromise){
 				Logger.err("Database", e.error);
 				return new Result(false);
 			}
@@ -120,13 +122,13 @@ class Database {
 
 		const tokenResult = await this.find(tokenObj);
 		if(tokenResult.success){
-			const timeDiff = (new Date()).getTime() - tokenResult.data[0].date.getTime();
+			const timeDiff = (new Date()).getTime() - tokenResult.data.date.getTime();
 
 			if(timeDiff >= tokenLifetime)
 				await this.remove(tokenObj);
 
 			await this.switchToCollection(prevCollection);
-			return new Result(timeDiff < tokenLifetime, tokenResult.data[0]);
+			return new Result(timeDiff < tokenLifetime, tokenResult.data);
 		}
 
 		await this.switchToCollection(prevCollection);
@@ -141,11 +143,11 @@ class Database {
 				if (error){
 					reject(new PromiseError(error));
 				} else {
-					resolve(new Result(true));
+					resolve(new Result(true, res));
 				}
 			});
 		}).catch((e) => {
-			if(e.isPromise){
+			if(e.fromPromise){
 				Logger.warn("Database", e.error);
 				return new Result(false);
 			}
@@ -176,7 +178,7 @@ class Database {
 				}
 			});
 		}).catch((e) => {
-			if(e.isPromise){
+			if(e.fromPromise){
 				Logger.warn("Database", e.error);
 				return new Result(false);
 			}
@@ -192,7 +194,8 @@ class Database {
 		return result;
 	}
 
-	async _find(query){
+	async _query(query){
+		if(query === undefined) query = {};
 		if(this.collectionName === undefined) throw new Error("Invalid collection name undefined");
 		return new Promise((resolve, reject) => {
 			this.database.collection(this.collectionName).find(query).toArray((error, res) => {
@@ -203,7 +206,7 @@ class Database {
 				}
 			});
 		}).catch((e) => {
-			if(e.isPromise){
+			if(e.fromPromise){
 				Logger.warn("Database", e.error);
 				return new Result(false);
 			}
@@ -211,11 +214,25 @@ class Database {
 		});
 	}
 
+	async query(query){
+		Logger.log("Database", `Trying to find an object(s) in collection ${this.collectionName}...`);
+		const result = await this._query(query);
+		if(result.success) Logger.log("Database", `Successfully found the object(s) in collection ${this.collectionName}`);
+		else Logger.log("Database", `Could not find the object(s) in collection ${this.collectionName}`);
+		return result;
+	}
+
 	async find(query){
-		if(query === undefined) query = {};
 		Logger.log("Database", `Trying to find an object in collection ${this.collectionName}...`);
-		const result = await this._find(query);
-		if(result.success) Logger.log("Database", `Successfully found the object in collection ${this.collectionName}`);
+		const result = await this._query(query);
+		if(result.data.length != 1){
+			Logger.warn("Database", `Query returned more than one object in collection ${this.collectionName}`)
+			result.success = false
+		}
+		if(result.success){
+			Logger.log("Database", `Successfully found the object in collection ${this.collectionName}`);
+			result.data = result.data[0];
+		}
 		else Logger.log("Database", `Could not find the object in collection ${this.collectionName}`);
 		return result;
 	}
@@ -230,7 +247,7 @@ class Database {
 				}
 			});
 		}).catch((e) => {
-			if(e.isPromise){
+			if(e.fromPromise){
 				Logger.warn("Database", e.error);
 				return new Result(false);
 			}
@@ -243,6 +260,10 @@ class Database {
 		const result = await this._clear();
 		if(result.success) Logger.warn("Database", `Successfully cleared collection ${this.collectionName} in database ${this.databaseName}`);
 		return new Result(result.success, [this.collectionName]);
+	}
+
+	async file(fileName){
+		return new File(fileName, this);
 	}
 
 	async clearAll(){

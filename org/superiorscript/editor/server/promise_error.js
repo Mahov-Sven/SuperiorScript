@@ -3,7 +3,7 @@ var exports = module.exports = {};
 class PromiseError {
 
 	constructor(error){
-		this.isPromise = true;
+		this.fromPromise = true;
 		this.error = error;
 	}
 }

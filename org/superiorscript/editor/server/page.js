@@ -3,8 +3,8 @@ var exports = module.exports = {};
 const filePath = (path) => "../../" + path;
 const Globals = require(filePath("editor/server/globals"));
 const Compiler = require(filePath("compile/compiler"));
-const File = require(filePath("editor/server/file"));
 const Logger = require(filePath("editor/server/logger"));
+const File = require(filePath("editor/server/file")).File;
 const Response = require(filePath("editor/server/response")).Response;
 const Database = require(filePath("editor/server/database")).Database;
 
@@ -19,8 +19,9 @@ exports.editor = async function(request, resource){
 exports.clear = async function(request, resource, queue){
 	Logger.log("Page", "Collection clear requested...");
 
-	const collectionName = queue.query.collection || queue.query.c;
-	const developer = queue.query.developer || queue.query.d;
+	const query = queue.query;
+	const collectionName = query.collection || query.c;
+	const developer = query.developer || query.d;
 	const databaseName = developer ? databases.developer : databases.production;
 
 	const database = new Database(databaseName, collectionName);
@@ -44,9 +45,10 @@ exports.clear = async function(request, resource, queue){
 exports.register = async function(request, resource, queue){
 	Logger.log("Page", "Account registration requested");
 
-	const username = queue.query.username || queue.query.u;
-	const password = queue.query.password || queue.query.p;
-	const developer = queue.query.developer || queue.query.d;
+	const query = queue.query;
+	const username = query.username || query.u;
+	const password = query.password || query.p;
+	const developer = query.developer || query.d;
 	const databaseName = developer ? databases.developer : databases.production;
 
 	const database = new Database(databaseName);
@@ -116,10 +118,11 @@ exports.register = async function(request, resource, queue){
 exports.login = async function(request, resource, queue){
 	Logger.log("Page", "Login requested");
 
-	const username = queue.query.username || queue.query.u;
-	const password = queue.query.password || queue.query.p;
-	const developer = queue.query.developer || queue.query.d;
-	const token = queue.query.token || queue.query.t;
+	const query = queue.query;
+	const username = query.username || query.u;
+	const password = query.password || query.p;
+	const developer = query.developer || query.d;
+	const token = query.token || query.t;
 	const databaseName = developer ? databases.developer : databases.production;
 
 	const database = new Database(databaseName);
@@ -207,6 +210,10 @@ exports.login = async function(request, resource, queue){
 	}
 }
 
+exports.file = async function(request, resource, queue){
+
+}
+
 exports.unknown = async function(request, resource, queue){
 	Logger.log("Page", "Unknown page requested");
 
@@ -214,27 +221,19 @@ exports.unknown = async function(request, resource, queue){
 	const regex = /(?:\.([^.]+))?$/;
 	const fileExtension = regex.exec(path)[1];
 
-	let output = `"${path}"`;
-
 	const fileResult = await File.readFile(path);
 
 	switch (fileExtension) {
 		case "js":
 			resource.writeHead(200, {'Content-Type': 'text/javascript'});
-			output += " Type: JS";
 			break;
 		case "css":
 			resource.writeHead(200, {'Content-Type': 'text/css'});
-			output += " Type: CSS";
 			break;
 		default:
 			resource.writeHead(200, {'Content-Type': 'text/plain'});
-			output += " Type: Plain";
 			break;
 	}
 
-	if(fileResult.success) {
-		resource.write(fileResult.data);
-		Logger.log("Page", output);
-	}
+	if(fileResult.success) resource.write(fileResult.data);
 }
