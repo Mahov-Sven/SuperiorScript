@@ -51,9 +51,14 @@ class File {
 	}
 
 	static async readFile(fileName) {
+		fileName = "../../" + fileName;
 		Logger.log("File", `Reading file ${fileName}`);
-		const data = fs.readFileSync(this.data.fileName);
-		return new Result(true, data);
+		try {
+			const data = fs.readFileSync(fileName);
+			return new Result(true, data);
+		} catch (e) {
+			return new Result(false, {error: e});
+		}
 	}
 }
 
