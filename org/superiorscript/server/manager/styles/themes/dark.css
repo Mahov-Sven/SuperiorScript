@@ -1,0 +1,115 @@
+/*===== General Objects =====*/
+
+.MenuIcon {}
+
+.MenuIconSpacer {}
+
+.MenuIconBar {
+	background-color: #9b9b9b;
+}
+
+.MenuIcon:hover .MenuIconBar {
+	background-color: #ffffff;
+}
+
+.MenuIcon.Active .MenuIconBar {
+	background-color: #3e84f4;
+}
+
+.MenuIcon.Active:hover .MenuIconBar {
+	background-color: #6ea3f7;
+}
+
+.Active .MenuIconBar-Top {}
+
+.Active .MenuIconBar-Mid {}
+
+.Active .MenuIconBar-Bot {}
+
+.Text {
+	color: #cccccc;
+	font-family: Verdana;
+}
+
+.Button {}
+
+.ButtonText {
+	color: #9b9b9b;
+	font-family: Verdana;
+}
+
+.ButtonText:hover {
+	color: #ffffff;
+}
+
+.ButtonText.Active {
+	color: #3e84f4;
+}
+
+.ButtonText.Active:hover {
+	color: #6ea3f7;
+}
+
+.FlexRow {}
+
+.FlexColumn {}
+
+.FlexDynamic {}
+
+.FlexStatic {}
+
+.Disabled {
+	opacity: 0.2;
+	user-select: none;
+	cursor: default;
+	pointer-events: none;
+}
+
+/*===== Main Page =====*/
+
+#Content {}
+
+#BannerContainer {
+	background-color: #666666;
+}
+
+#BannerMenu {}
+
+#BannerMenu.Active {
+	background-color: #444444;
+}
+
+#BannerLogin {}
+
+#BannerLogin.Active {
+	background-color: #444444;
+}
+
+#BannerRegister {}
+
+#BannerRegister.Active {
+	background-color: #444444;
+}
+
+#Page {}
+
+#PageTools {
+	background-color: #333333;
+}
+
+#PageSpace {
+	background-color: #222222;
+}
+
+#EditorSpace {
+	background-color: #222222;
+}
+
+/*===== Login Page =====*/
+
+#Login-Page {}
+
+#Login-Container {
+	background-color: #666666;
+	border: 0.2rem solid #333333;
+}

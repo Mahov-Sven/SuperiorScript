@@ -14,7 +14,7 @@ Http.createServer(function(request, resource){
 	handleRequest(request, resource);
 }).listen(8080);
 
-async function handleCommand(command, resource){
+async function handleRequest(request, resource){
 	Logger.log("Server", "Starting to handle request");
 
 	const queue = Url.parse(request.url, true);

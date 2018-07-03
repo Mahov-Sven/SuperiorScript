@@ -1,0 +1,148 @@
+#Content {
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+}
+
+#BannerContainer {}
+
+#BannerMenu {
+	width: 2rem;
+	z-index: 1;
+}
+
+#BannerMenu.Active {}
+
+#BannerMenuSpace {}
+
+#BannerLogin {}
+
+#BannerLogin.Active {}
+
+#BannerRegister {}
+
+#BannerRegister.Active {}
+
+#Page {}
+
+#PageTools {}
+
+#PageSpace {}
+
+#EditorSpace {
+	border: 0;
+	padding: 0;
+	resize: none;
+}
+
+.FullContainer {
+	width: 100%;
+	height: 100%;
+}
+
+.MenuIconSpacer {
+	height: 5%;
+}
+
+.MenuIconBar {
+	height: 10%;
+	width: 50%;
+	margin: 15% 25%;
+	transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, width 0.2s ease-in-out;
+	transform-origin: left;
+}
+
+.Active .MenuIconBar-Top {
+	transform: rotate(45deg);
+	width: 70%;
+}
+
+.Active .MenuIconBar-Mid {
+	opacity: 0;
+}
+
+.Active .MenuIconBar-Bot {
+	transform: rotate(-45deg);
+	width: 70%;
+}
+
+.MenuSpace {
+
+}
+
+.Button {
+	user-select: none;
+	cursor: pointer;
+}
+
+.ButtonText {
+	vertical-align: middle;
+	text-align: center;
+	padding: 0 0.4rem;
+}
+
+.ButtonBanner {
+	height: 2rem;
+	line-height: 2rem;
+	font-size: 1rem;
+}
+
+.ButtonPageTool {
+	height: 1.5rem;
+	line-height: 1.5rem;
+	font-size: 0.75rem;
+}
+
+.FlexRow {
+	display: flex;
+	flex-direction: row;
+}
+
+.FlexColumn {
+	display: flex;
+	flex-direction: column;
+}
+
+.FlexDynamic {
+	flex-grow: 1;
+	height: 100%;
+	width: 100%;
+}
+
+.FlexStatic {
+	flex-shrink: 0;
+}
+
+.FlexCenter {
+	align-items: center;
+	justify-content: center;
+}
+
+.PageLine {
+	height: 0.2rem;
+	width: 90%;
+	left: 5%;
+}
+
+.ContentDividerColumn {
+	background-color: #000000;
+	opacity: 0.4;
+	height: 95%;
+	width: 0.1rem;
+	top: 2.5%;
+	margin: 0 0.2rem;
+}
+
+.ContentDividerRow {
+	background-color: #000000;
+	opacity: 0.4;
+	width: 95%;
+	height: 0.1rem;
+	left: 2.5%;
+	margin: 0.2rem 0;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+}

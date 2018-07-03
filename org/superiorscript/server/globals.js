@@ -22,6 +22,12 @@ global.sessionLifetime = 1000 /* base milliseconds */
 	* 	1 /* days */;
 global.loggerTitleSize = 10;
 global.loggerHeadingSize = 10;
+
+// ===============================================
+// 					  Commands
+// ===============================================
+
+global.commandRegex = /^\/(\w+)(\?((\w+=\w+&?)+))?$/;
 global.commandOptions = {
 	collectionName : {
 		name: "collectionName",

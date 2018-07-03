@@ -26,6 +26,7 @@
   "homepage": "https://github.com/Mahov-Sven/SuperiorScript#readme",
   "dependencies": {
     "gridfs-stream": "^1.1.1",
-    "mongodb": "^3.1.0-beta4"
+    "mongodb": "^3.1.0-beta4",
+    "ws": "^5.2.0"
   }
 }
