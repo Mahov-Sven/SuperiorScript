@@ -1,0 +1,21 @@
+.Menu-OptionRow {}
+
+.Menu-OptionRow:hover {}
+
+.Menu-OptionName {}
+
+.Menu-OptionSubMenuContainer {
+	position: relative;
+	width: 0;
+	height: 0;
+}
+
+.Menu-OptionMenu {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.Menu-OptionRow:not(:hover):not(.Active) > .Menu-OptionSubMenuContainer > .Menu-OptionMenu {
+	display: none;
+}

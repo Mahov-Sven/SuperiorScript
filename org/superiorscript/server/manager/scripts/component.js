@@ -1,9 +1,14 @@
 import * as Loader from "./loader.js"
 
-export async function menu(fragmentId, optionsPath, optionsFile){
+export async function menu_(fragmentId, optionsPath, optionsFile){
 	const root = $(`<div>`);
+	root.addClass("Menu-OptionSubMenuContainer");
 
-	let file = await Loader.loadFile(`server/manager/fragments/${optionsPath}${optionsFile}/${optionsFile}.options`);
+	const rootMenu = $(`<div>`);
+	rootMenu.addClass("Menu-OptionMenu");
+	root.append(rootMenu);
+
+	let file = await Loader.loadFile_(`server/manager/fragments/${optionsPath}${optionsFile}/${optionsFile}.options`);
 	file = file.replace(/[\s]+/g, '');
 	const menuOptionArray = file.split(';');
 	menuOptionArray.pop();
@@ -16,26 +21,44 @@ export async function menu(fragmentId, optionsPath, optionsFile){
 		const clickFragmentInsertId = optionRegexArray[8];
 		if(!filePath || !fileName || !clickFragmentInsertId) continue;
 
-		let elem = root;
+		let elem = rootMenu;
 		for(const optionSelectionIndex in optionPathArray){
-			const optionSelection = optionPathArray[optionSelectionIndex];
-			const findResult = elem.children(`#${fragmentId}-optionSelection`);
+			const optionSelectionName = optionPathArray[optionSelectionIndex];
+			const optionSelectionId = optionPathArray.slice(0, Number(optionSelectionIndex) + 1).join('-');
+			const fullOptionId = `${fragmentId}-MenuOption-${optionSelectionId}`;
+
+			const findResult = elem.find(`#${fullOptionId}`);
 			if(findResult.length === 0){
 				const optionElement = $("<div>");
-				optionElement.id = `#${fragmentId}-optionSelection`;
-				optionElement.text(optionSelection);
-				//optionElement.addClass();
+				optionElement.addClass("ButtonText");
+				optionElement.addClass("FlexRow");
+				optionElement.addClass("Menu-OptionRow");
+
+				const optionNameElement = $("<div>");
+				optionNameElement.text(optionSelectionName);
+				optionNameElement.addClass("FlexDynamic");
+				optionNameElement.addClass("Menu-OptionName");
+				optionElement.append(optionNameElement);
+
+				const optionSubMenuContainer = $("<div>");
+				optionSubMenuContainer.addClass("Menu-OptionSubMenuContainer");
+				optionElement.append(optionSubMenuContainer);
+
+				const optionNextMenu = $("<div>");
+				optionNextMenu.attr("id", fullOptionId);
+				optionNextMenu.addClass("FlexColumn");
+				optionNextMenu.addClass("Menu-OptionMenu");
+				optionSubMenuContainer.append(optionNextMenu);
+
 				elem.append(optionElement);
-				elem = optionElement;
+				elem = optionNextMenu;
 			}
-			else elem = findResult[0];
+			else elem = $(findResult[0]);
 			if(optionSelectionIndex == optionPathArray.length - 1){
-				elem.click(() => Loader.loadFragment(clickFragmentInsertId, fragmentId, filePath, fileName));
+				elem.click(() => Loader.loadFragment_(clickFragmentInsertId, fragmentId, filePath, fileName));
 			}
 		}
 	}
 
-	const result = root.children();
-	root.remove();
-	return result;
+	return root;
 }

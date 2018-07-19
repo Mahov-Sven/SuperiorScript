@@ -31,6 +31,14 @@
 	font-family: Verdana;
 }
 
+.Menu-OptionRow {
+	background-color: #444444;
+}
+
+.Menu-OptionRow:hover {
+	background-color: #222222;
+}
+
 .Button {}
 
 .ButtonText {

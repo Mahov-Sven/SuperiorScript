@@ -4,6 +4,9 @@ let activeBannerButton = -1;
 
 export function init() {
 
+	// Ready fragments
+	Loader.readyFragment("BannerMenu", "BannerMenuSpace", "menus/", "banner");
+
 	$("#PageTools").hide();
 
 	//$(".Button").click(function(){console.log(this)});
@@ -18,7 +21,9 @@ export function init() {
 
 async function setActiveBannerButton(active){
 
-	await Loader.clearFragment("Page", "PageSpace");
+	//Loader._clearFragment("Page");
+	await Loader.clearFragment_("BannerMenu");
+
 
 	$("#BannerMenu").removeClass("Active");
 	$("#BannerLogin").removeClass("Active");
@@ -32,11 +37,11 @@ async function setActiveBannerButton(active){
 	switch(active){
 		case 0:
 			$("#BannerMenu").addClass("Active");
-			await Loader.loadFragment("BannerMenu", "BannerMenuSpace", "menus/", "banner", true);
+			await Loader.loadFragment_("BannerMenu");
 			break;
 		case 1:
 			$("#BannerLogin").addClass("Active");
-			await Loader.loadFragment("Page", "PageSpace", "login");
+			//await Loader.loadFragment_("Page", "PageSpace", "login");
 			break;
 		case 2:
 			$("#BannerRegister").addClass("Active");
