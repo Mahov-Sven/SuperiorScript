@@ -13,6 +13,8 @@ async function load_(){
 }
 
 async function clear_(){
+
+	// TODO fix events being destroyed on clear
 	Fragment.clear(BannerMenu);
 }
 

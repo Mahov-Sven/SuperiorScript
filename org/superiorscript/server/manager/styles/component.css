@@ -16,6 +16,6 @@
 	left: 0;
 }
 
-.Menu-OptionRow:not(:hover):not(.Active) > .Menu-OptionSubMenuContainer > .Menu-OptionMenu {
+.Menu-OptionRow:not(:hover) > .Menu-OptionSubMenuContainer > .Menu-OptionMenu {
 	display: none;
 }

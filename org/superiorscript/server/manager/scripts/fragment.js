@@ -37,6 +37,11 @@ export function load(fragmentObj, style, elem){
 	$(`#${fragmentObj.location}`).append(elem);
 }
 
+export function detatch(fragmentObj){
+	$(`#${fragmentObj.id}-CSS`).remove();
+	$(`#${fragmentObj.location}`).detatch();
+}
+
 export function clear(fragmentObj){
 	$(`#${fragmentObj.id}-CSS`).remove();
 	$(`#${fragmentObj.location}`).empty();

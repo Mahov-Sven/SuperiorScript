@@ -2,4 +2,6 @@ File.Open;
 Server.Live : page/server -> PageSpace;
 Test.Commands : page/commands -> PageSpace;
 Test.Very.Long.Menu : page/commands -> PageSpace;
+Test.Very.Long.Menu2 : page/commands -> PageSpace;
+Test.Very.Long.Menu3 : page/commands -> PageSpace;
 Test.Very.Really.Long.Menu : page/commands -> PageSpace;

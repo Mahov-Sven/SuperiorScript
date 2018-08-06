@@ -1,6 +1,7 @@
 import * as Loader from "./loader.js"
 
 export async function menu_(fragmentId, optionsPath, optionsFile){
+
 	const root = $(`<div>`);
 	root.addClass("Menu-OptionSubMenuContainer");
 
@@ -16,10 +17,14 @@ export async function menu_(fragmentId, optionsPath, optionsFile){
 		const optionRegexArray = /^(([\w]+.?)+)(:((([\w]+\/)*)([\w]+))->([\w]+))?$/.exec(menuOption);
 		const optionPath = optionRegexArray[1];
 		const optionPathArray = optionPath.split('.');
-		const filePath = optionRegexArray[5];
-		const fileName = optionRegexArray[7];
-		const clickFragmentInsertId = optionRegexArray[8];
-		if(!filePath || !fileName || !clickFragmentInsertId) continue;
+		const clickFragmentId = optionPathArray.join("");
+		const clickFragmenPath = optionRegexArray[5];
+		const clickFragmentName = optionRegexArray[7];
+		const clickFragmentLocation = optionRegexArray[8];
+		if(!clickFragmentId || !clickFragmenPath ||
+			!clickFragmentName || !clickFragmentLocation) continue;
+
+		await Loader.readyFragment(clickFragmentId, clickFragmentLocation, clickFragmenPath, clickFragmentName);
 
 		let elem = rootMenu;
 		for(const optionSelectionIndex in optionPathArray){
@@ -30,15 +35,19 @@ export async function menu_(fragmentId, optionsPath, optionsFile){
 			const findResult = elem.find(`#${fullOptionId}`);
 			if(findResult.length === 0){
 				const optionElement = $("<div>");
-				optionElement.addClass("ButtonText");
 				optionElement.addClass("FlexRow");
 				optionElement.addClass("Menu-OptionRow");
 
 				const optionNameElement = $("<div>");
 				optionNameElement.text(optionSelectionName);
-				optionNameElement.addClass("FlexDynamic");
+				optionNameElement.addClass("FlexStatic");
+				optionNameElement.addClass("ButtonText");
 				optionNameElement.addClass("Menu-OptionName");
 				optionElement.append(optionNameElement);
+
+				const optionFillElement = $("<div>");
+				optionFillElement.addClass("FlexDynamic");
+				optionElement.append(optionFillElement);
 
 				const optionSubMenuContainer = $("<div>");
 				optionSubMenuContainer.addClass("Menu-OptionSubMenuContainer");
@@ -50,13 +59,18 @@ export async function menu_(fragmentId, optionsPath, optionsFile){
 				optionNextMenu.addClass("Menu-OptionMenu");
 				optionSubMenuContainer.append(optionNextMenu);
 
+				optionElement.click(() => {
+					console.log(root.find(".Active"));
+					root.find(".Active").removeClass(".Active");
+					optionNameElement.addClass("Active");
+				});
+				if(optionSelectionIndex == optionPathArray.length - 1)
+					optionElement.click(() => console.log("Hi"));//Loader.loadFragment_(clickFragmentId));
+
 				elem.append(optionElement);
 				elem = optionNextMenu;
 			}
 			else elem = $(findResult[0]);
-			if(optionSelectionIndex == optionPathArray.length - 1){
-				elem.click(() => Loader.loadFragment_(clickFragmentInsertId, fragmentId, filePath, fileName));
-			}
 		}
 	}
 
